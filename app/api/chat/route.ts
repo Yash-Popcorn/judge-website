@@ -17,10 +17,32 @@ const finalAnswerSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const { messages: originalMessages, localContext }: { messages: CoreMessage[], localContext: Record<string, ExtractedFile> } = await req.json();
+  const { messages: originalMessages, localContext, overrideUserMessage }: { 
+    messages: CoreMessage[], 
+    localContext: Record<string, ExtractedFile>,
+    overrideUserMessage?: string 
+  } = await req.json();
 
   const orchestratorLlm = google('gemini-2.5-pro-preview-03-25');
 
+  // Create a deep copy of messages to work with
+  const processedMessages = [...originalMessages];
+  
+  // Apply override to the last user message if provided
+  if (overrideUserMessage) {
+    for (let i = processedMessages.length - 1; i >= 0; i--) {
+      const message = processedMessages[i];
+      if (message.role === 'user' && typeof message.content === 'string') {
+        // Only replace user messages with string content
+        processedMessages[i] = {
+          ...message,
+          content: overrideUserMessage
+        };
+        break;
+      }
+    }
+  }
+  
   // System prompt to be prepended to messages
   const systemPrompt = `
     You are an AI assistant orchestrating a multi-step task execution. **IT IS CRITICAL TO FOLLOW THE PROCESS EXACTLY.** Do not deviate.
@@ -165,10 +187,9 @@ export async function POST(req: Request) {
   `;
 
   // Prepend the system prompt as a system message at the beginning
-  // Make sure the message is properly typed as a CoreMessage
   const messages: CoreMessage[] = [
     { role: 'system', content: systemPrompt } as CoreMessage,
-    ...originalMessages
+    ...processedMessages
   ];
 
   // Prepare the tools

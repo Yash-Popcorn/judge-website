@@ -30,15 +30,20 @@ export default function ChatPage() {
 
     const currentContext = typeof window !== 'undefined' ? getExtractedTexts() : {};
 
+    // Add a reminder for deep reasoning as a hidden part of the message
+    const enhancedContent = `${input}\n\n[Remember to engage in deep reasoning and thinking, and follow the detailed execution process steps as outlined in your instructions.]`;
+
     const messageToSend: Message = {
       id: crypto.randomUUID(),
       role: 'user', 
-      content: input,
+      content: input, // Show original input to the user
     };
 
     append(messageToSend, {
       body: {
-        localContext: currentContext
+        localContext: currentContext,
+        // Override the content only in the API call
+        overrideUserMessage: enhancedContent
       }
     });
 
