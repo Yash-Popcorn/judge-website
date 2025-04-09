@@ -1,6 +1,5 @@
 import { google } from '@ai-sdk/google';
 import { streamText, tool } from 'ai';
-import { z } from 'zod';
 import { type CoreMessage } from 'ai';
 // Import the tool definitions (now includes askPossibility, askAdditionalInfo, planning)
 import { chatTools } from '@/app/tools/definitions'; 
@@ -11,10 +10,6 @@ import { contextualizerTool as contextualizerToolDefinition, executeContextualiz
 
 export const maxDuration = 600;
 
-// Define a simple schema for the final synthesized answer
-const finalAnswerSchema = z.object({
-  answer: z.string().describe("The final, synthesized answer to the user's query, integrating information from all executed tools (research, qa, analysis, council verdict, etc.)."),
-});
 
 export async function POST(req: Request) {
   const { messages: originalMessages, localContext, overrideUserMessage }: { 
@@ -53,7 +48,7 @@ export async function POST(req: Request) {
     *   **Phase 1: Assessment**
         *   First, call 'classify'.
         *   Then, call 'askPossibility'.
-        *   If 'askPossibility' tool returns 'NO' (task not feasible), immediately proceed to **Phase 5: Final Synthesis** using 'finalAnswer' to explain why.
+        *   If 'askPossibility' tool returns 'NO' (task not feasible), immediately proceed to **Phase 5: Final Synthesis** 
         *   If 'askPossibility tool returns 'YES' but indicates missing information, call 'askAdditionalInfo' tool. Await user response before proceeding.
         *   If 'askPossibility' returns 'YES' and sufficient information is available, proceed to **Phase 2: Planning**.
     *   **Phase 2: Planning**
@@ -79,10 +74,10 @@ export async function POST(req: Request) {
             *   Split work concurrently.
             *   Example: History presentation -> multiple researchers for different periods simultaneously.        
         *   Available Agent Types:
-            *   "researcher": Internet research via query.
+            *   "researcher": Internet research 
             *   "qa": Answer questions based *only* on provided context (NO synthesis/summarization).
-            *   "contextualizer": Search user files/docs (REQUIRES 'query' with search terms).
-            *   "analyst": Analyze data, provide insights using mermaid.js diagrams (REQUIRES 'query' specifying diagram type and data).
+            *   "contextualizer": Search user files/docs
+            *   "analyst": Analyze data, provide insights using mermaid.js diagrams 
         *   Parallelization Rules:
             *   Same 'order' number = parallel execution.
             *   Break down large research/analysis.
@@ -100,7 +95,6 @@ export async function POST(req: Request) {
         *   Contextualizer Agent Rules:
             *   REQUIRED for finding/recalling personal docs/files (e.g., "find that doc", "file about X").
             *   REQUIRED when users refer to previously seen/created docs.
-            *   MUST have a "query" field with specific search terms.
             *   Should be among the FIRST agents for document retrieval.
             *   DO NOT route document searches to 'researcher'.
             *   Good Query Examples: "Search for documents about Marco Polo", "Find files mentioning fashion trends: styles, clothing", "Locate docs with financial data: budget, expenses, Q2". Include potential keywords.
@@ -143,16 +137,14 @@ export async function POST(req: Request) {
     *   Expect the tool to return relevant snippets or an error.
 
 
-    **REVISED SYNTHESIS GUIDELINES (when using the 'finalAnswer' tool):**
+    **REVISED SYNTHESIS GUIDELINES:**
     *   **Combine Tool Results:** Weave together the relevant findings from research, analysis (including mentioning generated diagrams), contextualizer, and QA tools into a coherent narrative.
     *   **Address the Query:** Ensure the final output directly answers the user's original question or fulfills their request.
     *   **Formatting & Citations:** Use clear formatting (like Markdown). Cite sources from research if appropriate.
-    *   **Output:** Use the 'finalAnswer' tool, providing the synthesized text in the 'answer' parameter.
 
     **FINAL INSTRUCTIONS:**
     **DO NOT SKIP PHASES. DO NOT CHANGE THE ORDER (1 -> 2 -> 3 -> 4 -> 5).**
-    **Phase 4 (\`council\`) MUST run before Phase 5 (\`finalAnswer\`).**
-    **Phase 5 (\`finalAnswer\`) MUST be the last action.**
+    **Phase 4 (\`council\`) MUST run before Phase 5 (\`finding final answer\`).**
   `;
 
   // Prepend the system prompt as a system message at the beginning
@@ -176,15 +168,6 @@ export async function POST(req: Request) {
       execute: async (args) => executeContextualizer(args, localContext || {}),
     }),
 
-    // Tool for final answer synthesis
-    finalAnswer: tool({
-      description: "Provides the final, synthesized answer to the user after all processing and council evaluation steps.",
-      parameters: finalAnswerSchema,
-      execute: async (args: z.infer<typeof finalAnswerSchema>) => {
-        console.log("FinalAnswer tool execute called with args:", args);
-        return args;
-      }
-    })
   };
 
   // Use the messages array with the prepended system prompt instead of separate system parameter
