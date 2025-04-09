@@ -143,19 +143,8 @@ export async function POST(req: Request) {
     *   Call the 'contextualizer' tool with that single query. It will search the provided file context.
     *   Expect the tool to return relevant snippets or an error.
 
-    **COUNCIL GUIDELINES (for Orchestrator calling the 'council' tool):**
-    *   **Trigger:** Execute this tool **ONLY** in **Phase 4**, immediately after all Phase 3 tools (research, analyst, etc.) have completed. **DO NOT SKIP THIS STEP.**
-    *   **Execution:** Call the imported 'council' tool with these prepared arguments.
-    *   **Output Handling:** Expect a JSON object with 'judgement' and 'explanation'. Pass this entire result to the **Phase 5 'finalAnswer'** synthesis step.
 
     **REVISED SYNTHESIS GUIDELINES (when using the 'finalAnswer' tool):**
-    *   **Trigger:** Execute this tool **ONLY** in **Phase 5**, after the 'council' tool (Phase 4) has completed, or directly after Phase 1 if the task was deemed infeasible. This is the **ABSOLUTE LAST STEP**.
-    *   **Primary Goal: Alignment & Comprehensiveness.** Your main objective is to synthesize all gathered information into a response that directly and thoroughly addresses the *original user query* that initiated this process. Avoid overly brief or concise answers unless the user explicitly asked for brevity or the context strongly suggests it.
-    *   **Inputs Review:** Carefully review the *original user query*, the *entire conversation history*, the *plan*, the results from *all* executed tools (research, analyst, contextualizer, qa, etc.), and crucially, the *council's judgement and explanation*.
-    *   **Integrate Council Findings:** Explicitly acknowledge or implicitly incorporate the council's verdict. 
-        *   If judgement is 'passed', proceed with confidence but ensure the content aligns with the verified information.
-        *   If judgement is 'not_verified', 'hallucination', or 'not_aligned', state the potential issue clearly and cautiously in the response (e.g., "While research suggests X, an internal check noted potential inaccuracies regarding Y..." or "Based on the available information, here's an analysis, though please note it might not fully align with aspect Z of your request..."). Adjust the synthesized answer to mitigate the flagged issue where possible.
-        *   If judgement is 'error', indicate that a part of the internal evaluation process encountered an issue.
     *   **Combine Tool Results:** Weave together the relevant findings from research, analysis (including mentioning generated diagrams), contextualizer, and QA tools into a coherent narrative.
     *   **Address the Query:** Ensure the final output directly answers the user's original question or fulfills their request.
     *   **Formatting & Citations:** Use clear formatting (like Markdown). Cite sources from research if appropriate.
