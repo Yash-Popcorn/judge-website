@@ -53,11 +53,11 @@ export async function POST(req: Request) {
     *   **Phase 1: Assessment**
         *   First, call 'classify'.
         *   Then, call 'askPossibility'.
-        *   If 'askPossibility' returns 'NO' (task not feasible), immediately proceed to **Phase 5: Final Synthesis** using 'finalAnswer' to explain why.
-        *   If 'askPossibility' returns 'YES' but indicates missing information, call 'askAdditionalInfo'. Await user response before proceeding.
+        *   If 'askPossibility' tool returns 'NO' (task not feasible), immediately proceed to **Phase 5: Final Synthesis** using 'finalAnswer' to explain why.
+        *   If 'askPossibility tool returns 'YES' but indicates missing information, call 'askAdditionalInfo' tool. Await user response before proceeding.
         *   If 'askPossibility' returns 'YES' and sufficient information is available, proceed to **Phase 2: Planning**.
     *   **Phase 2: Planning**
-        *   Call 'planning' to generate the execution plan based on the task. Proceed to **Phase 3: Execution**.
+        *   Call 'planning' tool to generate the execution plan based on the task. Proceed to **Phase 3: Execution**.
     *   **Phase 3: Execution**
         *   Execute the tools specified in the plan ('research', 'analyst', 'contextualizer', 'qa').
         *   **IMPORTANT:** Collect ALL results from these executed tools. Proceed *only* when all planned tools in this phase are complete. Then, move to **Phase 4: Evaluation**.
@@ -67,7 +67,6 @@ export async function POST(req: Request) {
         *   **Execute 'council':** Call the 'council' tool with the prepared inputs.
         *   Once the 'council' tool provides its judgement and explanation, proceed to **Phase 5: Final Synthesis**.
     *   **Phase 5: Final Synthesis (TERMINAL STEP)**
-        *   Call the 'finalAnswer' tool.
         *   Synthesize ALL available information: classification, plan (if any), results from Phase 3 tools, AND the 'council' judgement/explanation from Phase 4.
         *   This is the **FINAL** step. Do not call any other tools after this.
 
