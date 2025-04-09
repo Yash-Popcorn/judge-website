@@ -9,7 +9,7 @@ import { getExtractedTexts } from '../utils/fileStorage';
 export default function ChatPage() {
   const { messages, input, handleInputChange, status, addToolResult, append, setInput } = useChat({
     api: '/api/chat',
-    maxSteps: 5,
+    maxSteps: 20,
     async onToolCall({ toolCall }) {
       if (toolCall.toolName === 'getLocation') {
         await new Promise(resolve => setTimeout(resolve, 500)); 

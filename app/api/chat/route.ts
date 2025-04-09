@@ -9,7 +9,7 @@ import { classificationTool } from '@/app/tools/classificationTool';
 // Import the actual contextualizer tool implementation and definition for overriding
 import { contextualizerTool as contextualizerToolDefinition, executeContextualizer, type ExtractedFile } from '@/app/tools/contextualizerTool';
 
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 // Define a simple schema for the final synthesized answer
 const finalAnswerSchema = z.object({
@@ -202,7 +202,7 @@ export async function POST(req: Request) {
     model: orchestratorLlm,
     messages,
     toolCallStreaming: true,
-    maxSteps: 10,
+    maxSteps: 20,
     tools: runtimeTools,
   });
 
