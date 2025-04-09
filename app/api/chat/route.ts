@@ -78,22 +78,7 @@ export async function POST(req: Request) {
             *   Parallelizable subtasks: MULTIPLE agents in parallel.
             *   Prioritize SPEED.
             *   Split work concurrently.
-            *   Example: History presentation -> multiple researchers for different periods simultaneously.
-        *   Response Schema: Your planning tool response MUST be valid JSON:
-            \\\`\\\`\\\`json
-            {
-                "task": "original task description",
-                "agents": [
-                    {
-                        "type": "agent type name",
-                        "order": <number>, // Same order = parallel
-                        "purpose": "description of agent's goal",
-                        "dependencies": [<list_of_order_numbers>], // Use integers, empty list [] if none
-                        "query": "<specific query for researcher, contextualizer, or analyst (required for these)>"
-                    }
-                ]
-            }
-            \\\`\\\`\\\`
+            *   Example: History presentation -> multiple researchers for different periods simultaneously.        
         *   Available Agent Types:
             *   "researcher": Internet research via query.
             *   "qa": Answer questions based *only* on provided context (NO synthesis/summarization).
@@ -160,10 +145,6 @@ export async function POST(req: Request) {
 
     **COUNCIL GUIDELINES (for Orchestrator calling the 'council' tool):**
     *   **Trigger:** Execute this tool **ONLY** in **Phase 4**, immediately after all Phase 3 tools (research, analyst, etc.) have completed. **DO NOT SKIP THIS STEP.**
-    *   **Inputs Preparation:**
-        *   \\\`aggregatedToolResults\\\`: Create a comprehensive string summarizing the outputs/findings from *all* tools executed in the preceding steps (Phase 3). Be concise but capture the essence.
-        *   \\\`userQuery\\\`: Provide the *original* user message/query that started the current task sequence.
-        *   \\\`conversationHistory\\\`: Format the *entire* message history up to this point into a single string (e.g., "role: content\\nrole: content...").
     *   **Execution:** Call the imported 'council' tool with these prepared arguments.
     *   **Output Handling:** Expect a JSON object with 'judgement' and 'explanation'. Pass this entire result to the **Phase 5 'finalAnswer'** synthesis step.
 
