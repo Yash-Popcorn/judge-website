@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { tool } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
-
+console.log('askPossibilityTool');
 // Define the schema for the expected response from the LLM
 const possibilitySchema = z.object({
   isPossible: z.enum(['YES', 'NO']).describe('Whether the task is possible (YES or NO).'),
