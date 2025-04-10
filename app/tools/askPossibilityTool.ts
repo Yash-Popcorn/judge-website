@@ -97,10 +97,10 @@ export const askPossibilityTool = tool({
   parameters: z.object({
     taskDescription: z.string().describe("The user's query describing the software task."),
     // Optional: Add context if needed, e.g., relevant file snippets
-    // contextText: z.string().optional().describe("Additional context like file contents."), 
+    contextText: z.string().optional().describe("Additional context like file contents."), 
   }),
   
-  execute: async ({ taskDescription /*, contextText */ }) => {
+  execute: async ({ taskDescription, contextText }) => {
     const gpt4o = openai('gpt-4o');
     
     // Create system capabilities description based on available tools
@@ -133,7 +133,7 @@ export const askPossibilityTool = tool({
         - Consider the multi-turn nature of conversation - users can provide additional information when needed
         
         Task to evaluate: ${taskDescription}
-
+        Context: ${contextText}
         Provide a YES/NO answer and brief justification for whether this is a valid software task based on the system's capabilities.`;
 
     try {
