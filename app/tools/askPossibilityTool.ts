@@ -125,6 +125,8 @@ export const askPossibilityTool = tool({
         - Process and analyze documents or files mentioned by the user
         - Access and summarize content from the conversation context
         - Work with information that exists in the conversation or that the user could share
+        - Use internet research to find information
+        - Access or Process user files
         
         Task evaluation guidelines:
         - Answer YES if the task can be accomplished using the system's capabilities
