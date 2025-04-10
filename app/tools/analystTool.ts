@@ -1,7 +1,7 @@
 import { tool, generateText } from 'ai';
-import { google } from '@ai-sdk/google'; // Or your preferred provider
 import { z } from 'zod';
 import Exa from 'exa-js';
+import { google } from '@ai-sdk/google';
 
 // --- Remove Mermaid Initialization at module level ---
 // mermaid.initialize({ ... }); 
@@ -32,8 +32,8 @@ export type AnalystToolResult = z.infer<z.ZodObject<{
 
 // Initialize a separate LLM instance for diagram generation
 // This could be the same model type or a different one optimized for code generation
-const diagramGeneratorLlm = google('gemini-2.0-flash-thinking-exp-01-21'); // Use an appropriate model
-const evaluatorLlm = google('gemini-2.0-flash-thinking-exp-01-21'); // Can use the same or different model
+const diagramGeneratorLlm = google('gemini-2.5-pro-preview-03-25');
+const evaluatorLlm = google('gemini-2.5-pro-preview-03-25');
 
 // --- Helper to Extract Diagram Type (Restore) ---
 function extractDiagramType(query: string): string | null {
@@ -112,7 +112,8 @@ Otherwise, respond with specific, actionable feedback explaining EXACTLY what is
             model: evaluatorLlm,
             system: systemPrompt,
             prompt: prompt, // Pass the concatenated prompt variable
-            temperature: 0.1, 
+            temperature: 0.1,
+            
         });
 
         const feedback = evaluation.trim();
@@ -242,6 +243,7 @@ ${currentMermaidCode}`;
                     system: generatorSystemPrompt,
                     prompt: generatorPrompt,
                     temperature: 0.1 + (attempts * 0.1),
+                    
                 });
 
                 // --- Code Cleaning Step ---

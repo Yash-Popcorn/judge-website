@@ -1,6 +1,6 @@
-import { google } from '@ai-sdk/google';
 import { streamText, tool } from 'ai';
 import { type CoreMessage } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
 // Import the tool definitions (now includes askPossibility, askAdditionalInfo, planning)
 import { chatTools } from '@/app/tools/definitions'; 
 // Import the classification tool separately (as it's not in definitions.ts)
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     overrideUserMessage?: string 
   } = await req.json();
 
-  const orchestratorLlm = google('gemini-2.5-pro-preview-03-25');
+  const orchestratorLlm = anthropic('claude-3-7-sonnet-20250219');
 
   // Create a deep copy of messages to work with
   const processedMessages = [...originalMessages];
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     *   **Phase 2: Planning**
         *   Call 'planning' tool to generate the execution plan based on the task. Proceed to **Phase 3: Execution**.
     *   **Phase 3: Execution**
-        *   Execute the tools specified in the plan ('research', 'analyst', 'contextualizer', 'qa').
+        *   Execute the tools specified in the plan ('research', 'analyst', 'contextualizer').
         *   **IMPORTANT:** Collect ALL results from these executed tools. Proceed *only* when all planned tools in this phase are complete. Then, move to **Phase 4: Evaluation**.
     *   **Phase 4: Evaluation (MANDATORY)**
         *   **CRITICAL STEP:** You MUST now execute the 'council' tool.

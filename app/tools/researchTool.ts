@@ -19,6 +19,7 @@ export type ResearchToolResult = z.infer<z.ZodArray<z.ZodObject<{
 // Define the input schema for the research tool
 const researchToolInputSchema = z.object({
     queries: z.array(z.string()).describe('An array of search queries to execute using Exa.'),
+    users_message_prompt: z.string().describe('A prompt for the users message to be used in the summary.'),
 });
 
 // Environment variable check
@@ -34,7 +35,7 @@ export const researchTool = tool({
                   Searches and retrieves text content in a single step.
                   Returns title, URL, and text content for top results for each query.`, // Simplified description
     parameters: researchToolInputSchema,
-    execute: async ({ queries }) => {
+    execute: async ({ queries, users_message_prompt }) => {
         if (!process.env.EXA_API_KEY) {
             return queries.map(query => ({
                 query: query,
@@ -51,15 +52,18 @@ export const researchTool = tool({
                 // Use searchAndContents directly
                 const response = await exa.searchAndContents(query, {
                     numResults: 3, 
-                    // type: 'keyword', // Type might not be needed/supported for searchAndContents, check docs if needed
+                    type: 'keyword', // Type might not be needed/supported for searchAndContents, check docs if needed
                     text: true, // Request text content
+                    summary: {
+                        query: `Follow the query: "${query}" and the users message: "${users_message_prompt}" to provide a summary of the results.`,
+                    }
                 });
 
                 // Map results directly, assuming response.results has title, url, text
                 const results = response.results.map(res => ({
                     title: res.title || 'No title available',
                     url: res.url,
-                    text: res.text || 'No text content retrieved.', // Use the text field
+                    text: res.summary || 'No text content retrieved.', // Use the text field
                 }));
 
                 console.log(`Query "${query}" searchAndContents succeeded with ${results.length} results.`);

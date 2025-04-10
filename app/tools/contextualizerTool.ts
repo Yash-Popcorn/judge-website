@@ -1,7 +1,6 @@
 import { tool, generateText } from 'ai';
-import { google } from '@ai-sdk/google';
 import { z } from 'zod';
-
+import { google } from '@ai-sdk/google';
 // Define the structure for the ExtractedFile expected from local storage
 export interface ExtractedFile {
   fileName: string;
@@ -24,7 +23,7 @@ export type ContextualizerResult = z.infer<z.ZodObject<{
 }>>;
 
 // --- LLM Instance for Context Search ---
-const contextSearchLlm = google('gemini-2.0-flash-thinking-exp-01-21'); // Or another suitable model
+const contextSearchLlm = google('gemini-2.5-pro-preview-03-25');
 
 // --- Separate Exported Execution Logic --- 
 export async function executeContextualizer(
@@ -83,7 +82,7 @@ Relevant Snippets (or state if none found):
             system: systemPrompt,
             prompt: prompt,
             temperature: 0.3, // Adjust temperature as needed
-            // maxTokens: 500, // Optional: Limit output length
+            
         });
 
         if (!foundContext || foundContext.trim() === '') {

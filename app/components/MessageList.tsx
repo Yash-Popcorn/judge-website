@@ -197,7 +197,55 @@ const MessageList: React.FC<MessageListProps> = ({ messages, addToolResult, isLo
               switch (part.type) {
                 case 'text':
                   return (
-                    <div key={index}>
+                    <div key={index} className="text-content">
+                      <style jsx>{`
+                        /* Custom styles for the markdown content */
+                        .text-content :global(*) {
+                          @apply text-base leading-relaxed tracking-wide;
+                        }
+                        .text-content :global(h1) {
+                          @apply text-2xl font-semibold mt-5 mb-3 tracking-normal;
+                        }
+                        .text-content :global(h2) {
+                          @apply text-xl font-semibold mt-4 mb-3 tracking-normal;
+                        }
+                        .text-content :global(h3) {
+                          @apply text-lg font-semibold mt-4 mb-2 tracking-normal;
+                        }
+                        .text-content :global(p) {
+                          @apply my-3 text-base leading-relaxed tracking-wide;
+                        }
+                        .text-content :global(ul), .text-content :global(ol) {
+                          @apply my-3 pl-6 space-y-2;
+                        }
+                        .text-content :global(li) {
+                          @apply text-base leading-relaxed tracking-wide;
+                        }
+                        .text-content :global(pre) {
+                          @apply my-4 p-4 bg-black/10 rounded-md overflow-x-auto;
+                        }
+                        .text-content :global(code) {
+                          @apply font-mono text-base px-1.5 py-0.5 rounded bg-black/10 tracking-normal;
+                        }
+                        .text-content :global(pre code) {
+                          @apply p-0 bg-transparent;
+                        }
+                        .text-content :global(blockquote) {
+                          @apply pl-4 my-3 border-l-4 border-gray-400 italic text-gray-500 tracking-wide;
+                        }
+                        .text-content :global(a) {
+                          @apply text-blue-500 hover:underline tracking-wide;
+                        }
+                        .text-content :global(table) {
+                          @apply w-full my-4 text-base border-collapse;
+                        }
+                        .text-content :global(th), .text-content :global(td) {
+                          @apply border border-gray-300 p-2 tracking-wide;
+                        }
+                        .text-content :global(th) {
+                          @apply bg-gray-100 font-semibold;
+                        }
+                      `}</style>
                       <Markdown>{part.text}</Markdown>
                     </div>
                   );
