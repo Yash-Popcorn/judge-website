@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // Define the schema for a single agent in the plan
 const agentSchema = z.object({
-  type: z.enum(['researcher', 'qa', 'contextualizer', 'analyst'])
+  type: z.enum(['researcher', 'contextualizer', 'analyst'])
     .describe('The type of the agent.'),
   order: z.number()
     .describe('Execution order number. Agents with the same number run in parallel.'),

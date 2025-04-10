@@ -97,7 +97,7 @@ export const askPossibilityTool = tool({
   parameters: z.object({
     taskDescription: z.string().describe("The user's query describing the software task."),
     // Optional: Add context if needed, e.g., relevant file snippets
-    contextText: z.string().optional().describe("Additional context like file contents."), 
+    contextText: z.string().describe("Additional context to understand the situation."), 
   }),
   
   execute: async ({ taskDescription, contextText }) => {
